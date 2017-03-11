@@ -1,4 +1,5 @@
 ﻿// CG01.cpp : Defines the entry point for the console application.
+//http://www.tuicool.com/articles/VRRVV3j hide the console window
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>
