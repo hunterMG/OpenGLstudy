@@ -18,53 +18,46 @@ void init()
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor4f(r, g, b, 1);
-	glBegin(GL_LINE_LOOP);
-		for (int i=0; i<5; i++)
-		{
-			glVertex3f(x+d*cos((angle - i * 72)*PI / 180), y+d*sin((angle - i * 72)*PI / 180), 0);
-			glVertex3f(x+0.5*d*cos((angle-36 - i * 72)*PI / 180), y+0.5*d*sin((angle-36 - i * 72)*PI / 180), 0);
-		}
-	glEnd();
+	srand(time(NULL));
+	for (int j = 0; j < 20; j++) {
+		int k;
+		
+		k = rand() % 60 - 30;//五角星中心坐标（圆心）
+		x = float(k);
+		k = rand() % 60 - 30;
+		y = float(k);
+
+		k = rand() % 200;//颜色
+		r = k / 200.0f;
+		k = rand() % 200;
+		g = k / 200.0f;
+		k = rand() % 200;
+		b = k / 200.0f;
+
+		k = rand() % 20 + 1;//大小
+		d = float(k);
+		glColor4f(r, g, b, 1);
+		glBegin(GL_LINE_LOOP);
+			for (int i = 0; i < 5; i++)
+			{
+				glVertex3f(x + d*cos((angle - i * 72)*PI / 180), y + d*sin((angle - i * 72)*PI / 180), 0);
+				glVertex3f(x + 0.5*d*cos((angle - 36 - i * 72)*PI / 180), y + 0.5*d*sin((angle - 36 - i * 72)*PI / 180), 0);
+			}
+		glEnd();
+	}
 	glutSwapBuffers();//双缓存用，单缓存用glFlush()
 	//glFlush();//glFinish();
 }
 void change()
 {
-	int i;
-	srand(time(NULL));
-	i = rand() % 40 - 20;//五角星中心坐标（圆心）
-	x = float(i);
-	i = rand() % 40 - 20;
-	y = float(i);
-
-	i = rand() % 200;//颜色
-	r = i / 200.0f;
-	i = rand() % 200;
-	g = i / 200.0f;
-	i = rand() % 200;
-	b = i / 200.0f;
-
-	i = rand() % 40 + 1;//大小
-	d = float(i);
-
 	angle += 1;//旋转
 	display();
 }
 void timer(int value)
 {
-	if (green_color >= 1)
-		sign = false;
-	else if (green_color <= 0)
-		sign = true;
-	if (sign)
-		green_color += 0.1;
-	else
-		green_color -= 0.1;
-
 	//glutPostRedisplay();
 	change();
-	glutTimerFunc(50, timer, 0);
+	glutTimerFunc(50, timer, 0);//改为1即刻触发鬼畜模式
 }
 void reshape(int width, int height)
 {
@@ -81,11 +74,11 @@ int main(int argc, char**argv)
 	glutInitDisplayMode(GLUT_DOUBLE| GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(400, 400);
-	glutCreateWindow("OpenGL画五角星");
+	glutCreateWindow("OpenGL一闪一闪亮晶晶~");
 	init();
 	glutDisplayFunc(display);
-	glutIdleFunc(change);//空闲调用
-	//glutTimerFunc(50, timer, 0);
+	//glutIdleFunc(change);//空闲调用
+	glutTimerFunc(50, timer, 0);
 	glutReshapeFunc(reshape);
 	glutMainLoop();
 	return 0;
