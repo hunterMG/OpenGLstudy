@@ -22,7 +22,7 @@ void SetPixel(int x, int y, float r, float g, float b)
 }
 int max(int a, int b) { return ((a) > (b)) ? (a) : (b); }
 int min(int a, int b) { return ((a) > (b)) ? (b) : (a); }
-void ddaLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat b) {		//DDA算法
+void ddaLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat b) {		//线段DDA算法
 	if (x0 > x1) {//保证 x0<=x1
 		int xtmp = x0, ytmp = y0;
 		x0 = x1, y0 = y1;
@@ -41,28 +41,37 @@ void ddaLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat b) {	
 	} 
 	else
 	{
-		if (dx >= dy) {
+		if (m >= 0 && m <= 1) {
 			for (int x = x0; x <= x1; x++) {
 				SetPixel(x, (int)(y + 0.5), r, g, b);
 				y += m;
 			}
 		}
-		else {
-			if (y0 > y1) {//保证 y0<=y1
-				int xtmp = x0, ytmp = y0;
-				x0 = x1, y0 = y1;
-				x1 = xtmp, y1 = ytmp;
-			}
-			for (int x=x0,y = y0; y <= y1; y++) {
+		else if(m>1){
+			GLfloat x = (GLfloat)x0;
+			for (int y = y0; y <= y1; y++) {
 				SetPixel((int)(x + 0.5), y, r, g, b);
 				x += 1.0/m;
+			}
+		}
+		else if (m >= -1 && m<0) {
+			for (int x = x0; x <= x1; x++) {
+				SetPixel(x, (int)(y - 0.5), r, g, b);
+				y += m;
+			}
+		}
+		else {//m<-1
+			GLfloat x = (GLfloat)x0;
+			for (int y = y0; y >= y1; y--) {
+				SetPixel((int)(x + 0.5), y, r, g, b);
+				x -= 1.0 / m;
 			}
 		}
 		
 	}
 
 }
-void MidpointLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat bb) {	//中点算法
+void midpointLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat bb) {	//线段中点算法
 	if (x0 > x1) {//保证 x0<=x1
 		int xtmp = x0, ytmp = y0;
 		x0 = x1, y0 = y1;
@@ -129,18 +138,27 @@ void MidpointLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat 
 	}
 
 }
-//void midpointCircle(int )
+void midpointCircle(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat b) {
+	int h0 = 5 - 4 * rr,
+		E0 = 12,
+		SE0 = 20 - 8 * rr;
+	for (INT x = x0; x <= rr/pow(2, 0.5); x++) {
+
+	}
+}
 void drawLine()
 {
 	int x0, y0, x1, y1;
 	//x0 = 0; y0 = 0; x1 = 0; y1 = 400;	//斜率正无穷 
-	x0 = 0; y0 = 0; x1 = 600; y1 = 400;	// 0<m<1
-	//x0 = 0; y0 = 0; x1 = 100; y1 = 150;	// m>1
-	//x0 = 0; y0 = 0; x1 = 600; y1 = -400;	//-1<m<0
-	//x0 = 0; y0 = 0; x1 = 400; y1 = -600;	//m<-1
+//	x0 = 0; y0 = 0; x1 = 600; y1 = 400;	// 0<=m<1
+//	x0 = 0; y0 = 0; x1 = 100; y1 = 150;	// m>1
+//	x0 = 0; y0 = 0; x1 = 600; y1 = -400;	//-1<=m<0
+	x0 = 0; y0 = 0; x1 = 400; y1 = -600;	//m<-1
 	glClear(GL_COLOR_BUFFER_BIT);
-	ddaLine(x0-50, y0, x1-50, y1, 0, 1, 0);
-	MidpointLine(x0-100, y0, x1-100, y1, 0, 1, 1);
+	ddaLine(x0 - 50, y0, x1 - 50, y1, 0, 1, 0);
+	midpointLine(x0 - 100, y0, x1 - 100, y1, 0, 1, 1);
+	//ddaLine(x0, y0, x1, y1, 0, 1, 0);
+//	MidpointLine(x0, y0, x1, y1, 0, 1, 1);
 	//OpenGL绘制线段
 	glColor3f(1, 0, 0);
 	glBegin(GL_LINES);
