@@ -23,6 +23,12 @@ void SetPixel(int x, int y, float r, float g, float b)
 int max(int a, int b) { return ((a) > (b)) ? (a) : (b); }
 int min(int a, int b) { return ((a) > (b)) ? (b) : (a); }
 void ddaLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat b) {		//DDA算法
+	if (x0 > x1) {//保证 x0<=x1
+		int xtmp = x0, ytmp = y0;
+		x0 = x1, y0 = y1;
+		x1 = xtmp, y1 = ytmp;
+	}
+	GLfloat dx = fabs(x0 - x1), dy = fabs(y0 - y1);
 	GLfloat m = (GLfloat)(y1 - y0) / (x1 - x0);
 	GLfloat y = (GLfloat)y0;
 	if (x0==x1) //斜率正无穷
@@ -35,14 +41,33 @@ void ddaLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat b) {	
 	} 
 	else
 	{
-		for (int x = x0; x <= x1; x++){
-			SetPixel(x, (int)(y + 0.5), r, g, b);
-			y += m;
+		if (dx >= dy) {
+			for (int x = x0; x <= x1; x++) {
+				SetPixel(x, (int)(y + 0.5), r, g, b);
+				y += m;
+			}
 		}
+		else {
+			if (y0 > y1) {//保证 y0<=y1
+				int xtmp = x0, ytmp = y0;
+				x0 = x1, y0 = y1;
+				x1 = xtmp, y1 = ytmp;
+			}
+			for (int x=x0,y = y0; y <= y1; y++) {
+				SetPixel((int)(x + 0.5), y, r, g, b);
+				x += 1.0/m;
+			}
+		}
+		
 	}
 
 }
 void MidpointLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat bb) {	//中点算法
+	if (x0 > x1) {//保证 x0<=x1
+		int xtmp = x0, ytmp = y0;
+		x0 = x1, y0 = y1;
+		x1 = xtmp, y1 = ytmp;
+	}
 	int a, b, d1, d2, d, x, y;
 	a = y0 - y1; b = x1 - x0; 
 	x = x0; y = y0;
@@ -104,12 +129,13 @@ void MidpointLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat 
 	}
 
 }
-
+//void midpointCircle(int )
 void drawLine()
 {
-	int x0, y0, x1, y1;		//要求：x0 < x1
+	int x0, y0, x1, y1;
+	//x0 = 0; y0 = 0; x1 = 0; y1 = 400;	//斜率正无穷 
 	x0 = 0; y0 = 0; x1 = 600; y1 = 400;	// 0<m<1
-	//x0 = 0; y0 = 0; x1 = 400; y1 = 600;	// m>1
+	//x0 = 0; y0 = 0; x1 = 100; y1 = 150;	// m>1
 	//x0 = 0; y0 = 0; x1 = 600; y1 = -400;	//-1<m<0
 	//x0 = 0; y0 = 0; x1 = 400; y1 = -600;	//m<-1
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -143,7 +169,7 @@ void reshape(int width, int height)
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-200, 200, -200, 200, 0, 10);
+	glOrtho(-width/2, width/2, -height/2, height / 2, 0, 10);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
