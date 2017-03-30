@@ -5,6 +5,8 @@
 #include<time.h>
 #include<math.h>
 
+const double pi = 3.141592654;
+
 void init()
 {
 	glClearColor(0, 0, 0, 1);
@@ -138,15 +140,45 @@ void midpointLine(int x0, int y0, int x1, int y1, GLfloat r, GLfloat g, GLfloat 
 	}
 
 }
-void midpointCircle(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat b) {
-	int h0 = 5 - 4 * rr,
-		E0 = 12,
-		SE0 = 20 - 8 * rr;
-	for (INT x = x0; x <= rr/pow(2, 0.5); x++) {
-
+//圆弧的中点算法
+void midpointRound(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat b) {
+	int H = 5 - 4 * rr,
+		E = 12,
+		SE = 20 - 8 * rr;
+	GLfloat y = y0+rr;
+	for (int x = x0; x <= rr / pow(2, 0.5); x++) {
+		SetPixel(x, y , r, g, b);
+		SetPixel(-x, -y, r, g, b);
+		SetPixel(x,-y, r, g, b);
+		SetPixel(-x,y, r, g, b);
+		SetPixel(y, x, r, g, b);
+		SetPixel(y, -x, r, g, b);
+		SetPixel(-y, x, r, g, b);
+		SetPixel(-y, -x, r, g, b);
+		if (H <= 0) {
+			H += E;	E += 8;	SE += 8;
+		}
+		else {
+			--y;
+			H += SE;E += 8;	SE +=16;
+		}
 	}
 }
-void drawLine()
+//圆弧的正多边形逼近算法
+void polygonRound(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat bb) {
+	int n = 180;
+	double alpha = pi / n;
+	double a = cos(alpha), b = -sin(alpha); 
+	double c = -b, d = a;
+	double x1 = rr, y1 = 0, x2,y2;
+	for (int i = 0; i < 2*n; i++) {
+		x2 = a*x1 + b*y1;
+		y2 = c*x1 + d*y1;
+		midpointLine(x1, y1, x2, y2, r, g, bb);
+		x1 = x2, y1 = y2;
+	}
+}
+void draw()
 {
 	int x0, y0, x1, y1;
 	//x0 = 0; y0 = 0; x1 = 0; y1 = 400;	//斜率正无穷 
@@ -169,6 +201,10 @@ void drawLine()
 	for (int i = 0; i <= 100; i++) {
 		SetPixel(i, 0, 1, 1, 0);
 	}
+
+	midpointRound(0, 0, 100, 1, 0, 0);
+	polygonRound(0, 0, 100, 0, 1, 0);
+
 	glutSwapBuffers();
 }
 
@@ -199,7 +235,7 @@ int main(int argc, char**argv)
 	glutInitWindowSize(400, 400);
 	glutCreateWindow("OpenGL扫描转换");
 	init();
-	glutDisplayFunc(drawLine);
+	glutDisplayFunc(draw);
 	//glutIdleFunc(change);//空闲调用
 	//glutTimerFunc(50, timer, 0);
 	glutReshapeFunc(reshape);
