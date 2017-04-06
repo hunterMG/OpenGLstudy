@@ -166,7 +166,7 @@ void midpointRound(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat b) 
 }
 //圆弧的正多边形逼近算法
 void polygonRound(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat bb) {
-	int n = 180;
+	int n = 4;
 	double alpha = pi / n;
 	double a = cos(alpha), b = -sin(alpha); 
 	double c = -b, d = a;
@@ -182,11 +182,13 @@ void draw()
 {
 	int x0, y0, x1, y1;
 	//x0 = 0; y0 = 0; x1 = 0; y1 = 400;	//斜率正无穷 
-//	x0 = 0; y0 = 0; x1 = 600; y1 = 400;	// 0<=m<1
-//	x0 = 0; y0 = 0; x1 = 100; y1 = 150;	// m>1
+	x0 = 0; y0 = 0; x1 = 600; y1 = 400;	// 0<=m<1
 //	x0 = 0; y0 = 0; x1 = 600; y1 = -400;	//-1<=m<0
-	x0 = 0; y0 = 0; x1 = 400; y1 = -600;	//m<-1
+//	x0 = 0; y0 = 0; x1 = 400; y1 = -600;	//m<-1
 	glClear(GL_COLOR_BUFFER_BIT);
+	x0 = 0; y0 = 0; x1 = 400; y1 = 600;	// m>1
+	ddaLine(x0 - 50, y0, x1 - 50, y1, 0, 1, 0);
+	x0 = 0; y0 = 0; x1 = 600; y1 = 400;	// 0<=m<1
 	ddaLine(x0 - 50, y0, x1 - 50, y1, 0, 1, 0);
 	midpointLine(x0 - 100, y0, x1 - 100, y1, 0, 1, 1);
 	//ddaLine(x0, y0, x1, y1, 0, 1, 0);
@@ -203,7 +205,7 @@ void draw()
 	}
 
 	midpointRound(0, 0, 100, 1, 0, 0);
-	polygonRound(0, 0, 100, 0, 1, 0);
+	polygonRound(0, 0, 50, 0, 1, 0);
 
 	glutSwapBuffers();
 }
