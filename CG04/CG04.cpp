@@ -41,10 +41,10 @@ void midpointRound(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat b) 
 		SetPixel(x0-x, y0-y, r, g, b);
 		SetPixel(x0+x, y0-y, r, g, b);
 		SetPixel(x0-x, y0+y, r, g, b);
-		SetPixel(y0+y, x0+x, r, g, b);
-		SetPixel(y0+y, x0-x, r, g, b);
-		SetPixel(y0-y, x0+x, r, g, b);
-		SetPixel(y0-y, x0-x, r, g, b);
+		SetPixel(x0+y, y0+x, r, g, b);
+		SetPixel(x0+y, y0-x, r, g, b);
+		SetPixel(x0-y, y0+x, r, g, b);
+		SetPixel(x0-y, y0-x, r, g, b);
 		if (H <= 0) {
 			H += E;	E += 8;	SE += 8;
 		}
@@ -86,7 +86,7 @@ void display()
 			glVertex3f(x + 0.5*d1*cos((angle - 36 - i * 72)*PI / 180), y + 0.5*d1*sin((angle - 36 - i * 72)*PI / 180), 0);
 		}
 	glEnd();
-	midpointRound(roundX, roundY, 20, 0, 0, 1);
+	midpointRound(roundX, roundY, 20, 0, 0, 1);//任意方向运动的圆
 	glutSwapBuffers();
 }
 void change()
@@ -113,21 +113,21 @@ void change()
 	}
 	//任意方向运动的圆
 	srand(time(NULL));
-	if (x == 80) {
-		dx = rand() % 3 - 3;
+	if (roundX>75 && roundX < 80) {//用范围判断，防止加大于1的数时跳过
+		dx = rand() % 3 - 4;
 		dy = rand() % 6 - 3;
 	}
-	else if (x == -80) {
-		dx = rand() % 3;
+	else if (roundX > -80 && roundX < -75) {
+		dx = rand() % 3 + 1;
 		dy = rand() % 6 - 3;
 	}
-	else if (y == 80) {
+	else if (roundY < 80 && roundY > 75) {
 		dx = rand() % 6 - 3;
-		dy = rand() % 3 - 3;
+		dy = rand() % 3 - 4;
 	}
-	else if (y == -80) {
+	else if (roundY > -80 && roundY < -75) {
 		dx = rand() % 6 - 3;
-		dy = rand() % 3;
+		dy = rand() % 3 + 1;
 	}
 	roundX += dx;
 	roundY += dy;
