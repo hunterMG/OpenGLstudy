@@ -145,22 +145,22 @@ void midpointRound(int x0, int y0, GLfloat rr, GLfloat r, GLfloat g, GLfloat b) 
 	int H = 5 - 4 * rr,
 		E = 12,
 		SE = 20 - 8 * rr;
-	GLfloat y = y0+rr;
-	for (int x = x0; x <= rr / pow(2, 0.5); x++) {
-		SetPixel(x, y , r, g, b);
-		SetPixel(-x, -y, r, g, b);
-		SetPixel(x,-y, r, g, b);
-		SetPixel(-x,y, r, g, b);
-		SetPixel(y, x, r, g, b);
-		SetPixel(y, -x, r, g, b);
-		SetPixel(-y, x, r, g, b);
-		SetPixel(-y, -x, r, g, b);
+	GLfloat y = rr;
+	for (int x = 0; x <= rr / pow(2, 0.5); x++) {
+		SetPixel(x0 + x, y0 + y, r, g, b);
+		SetPixel(x0 - x, y0 - y, r, g, b);
+		SetPixel(x0 + x, y0 - y, r, g, b);
+		SetPixel(x0 - x, y0 + y, r, g, b);
+		SetPixel(x0 + y, y0 + x, r, g, b);
+		SetPixel(x0 + y, y0 - x, r, g, b);
+		SetPixel(x0 - y, y0 + x, r, g, b);
+		SetPixel(x0 - y, y0 - x, r, g, b);
 		if (H <= 0) {
 			H += E;	E += 8;	SE += 8;
 		}
 		else {
 			--y;
-			H += SE;E += 8;	SE +=16;
+			H += SE; E += 8;	SE += 16;
 		}
 	}
 }
@@ -204,7 +204,7 @@ void draw()
 		SetPixel(i, 0, 1, 1, 0);
 	}
 
-	midpointRound(0, 0, 100, 1, 0, 0);
+	midpointRound(100, 0, 100, 1, 0, 0);
 	polygonRound(0, 0, 50, 0, 1, 0);
 
 	glutSwapBuffers();
