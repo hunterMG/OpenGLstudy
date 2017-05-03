@@ -16,9 +16,6 @@ GLfloat angle = 0.0; //set the angle of rotation
 
 GLuint texture_id[MAX_NO_TEXTURES];
 
-float xrot;
-float yrot;
-float zrot;
 float ratio;
 
 void init()
@@ -35,18 +32,7 @@ void init()
 	glBindTexture(GL_TEXTURE_2D, texture_id[CUBE_TEXTURE]);
 	tgaLoad("chuyin2.tga", &temp_image, TGA_FREE | TGA_LOW_QUALITY);//加载图片
 	glEnable(GL_CULL_FACE);
-	/*
-	//光源1 绿色
-	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.1 };
-	GLfloat light_color[] = { 0.0, 1.0, 0.0, 1.0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	//光源2 聚光光源 红色
-	*/
+	//光源0 和 1（1是聚光光源） 
 	GLfloat mat_ambient[] = { 0.2, 0.2, 0.2, 1.0 }; GLfloat mat_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
 	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 }; GLfloat mat_shininess[] = { 50.0 };
 	GLfloat light0_diffuse[] = { 0.0, 0.0, 1.0, 1.0 }; GLfloat light0_position[] = { 3.0, 3.0, 1.0, 0.0 };
@@ -71,90 +57,11 @@ void init()
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 }
-void draw1(GLdouble dSize)
-{
-	double size = dSize * 0.5;
-	glEnable(GL_DEPTH_TEST);//深度测试消除隐藏面  
-	glBegin(GL_QUADS);
-	//上  
-	glColor4f(1.0, 0.0, 0.0, 1.0);
-	glNormal3d(0.0, 0.0, 1.0); //上  
-	glVertex3d(dSize, dSize, dSize);
-	glVertex3d(-dSize, dSize, dSize);
-	glVertex3d(-dSize, -dSize, dSize);
-	glVertex3d(dSize, -dSize, dSize);
-	//下  
-	glColor4f(0.0, 1.0, 0.0, 1.0);
-	glNormal3d(0.0, 0.0, -1.0);//下  
-	glVertex3d(dSize, dSize, -dSize);
-	glVertex3d(-dSize, dSize, -dSize);
-	glVertex3d(-dSize, -dSize, -dSize);
-	glVertex3d(dSize, -dSize, -dSize);
-	//前  
-	glColor4f(1.0, 1.0, 0.0, 1.0);
-	glNormal3d(1.0, 0.0, 0.0);//前  
-	glVertex3d(dSize, dSize, dSize);
-	glVertex3d(dSize, -dSize, dSize);
-	glVertex3d(dSize, -dSize, -dSize);
-	glVertex3d(dSize, dSize, -dSize);
-	//后  
-	glColor4f(0.0, 0.0, 1.0, 1.0);
-	glNormal3d(-1.0, 0.0, 0.0);//后  
-	glVertex3d(-dSize, dSize, dSize);
-	glVertex3d(-dSize, dSize, -dSize);
-	glVertex3d(-dSize, -dSize, -dSize);
-	glVertex3d(-dSize, -dSize, dSize);
-	//左  
-	glColor4f(0.0, 1.0, 0.5, 1.0);
-	glNormal3d(0.0, -1.0, 0.0);//左  
-	glVertex3d(dSize, -dSize, dSize);
-	glVertex3d(dSize, -dSize, -dSize);
-	glVertex3d(-dSize, -dSize, -dSize);
-	glVertex3d(-dSize, -dSize, dSize);
-	//右  
-	glColor4f(0.5, 1.0, 0.5, 1.0);
-	glNormal3d(0.0, 1.0, 0.0);//右  
-	glVertex3d(dSize, dSize, dSize);
-	glVertex3d(dSize, dSize, -dSize);
-	glVertex3d(-dSize, dSize, -dSize);
-	glVertex3d(-dSize, dSize, dSize);//右  
-	glEnd();
-}
-void display()
-{
-	//几何变换和取景变换，都是取景矩阵  
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	//设置取景矩阵  
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);//设置取景矩阵  
-														   //设置几何矩阵  
-	glRotatef(angle, 1.0, 0.0, 0.0); //绕X轴旋转  
-	glRotatef(angle, 0.0, 1.0, 0.0); //绕Y轴旋转  
-	glRotatef(angle, 0.0, 0.0, 1.0); //绕Z轴旋转  
 
-									 //绘制模型  
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//drawSolidCube2(2);//绘制正方体  
-	draw1(1);
-	glutSwapBuffers();
-	angle += 0.01f;
-}
-/************************************************************************/
-/* From class below                                                     */
-/************************************************************************/
 GLfloat vertices[][3] = { { -1.0,-1.0,-1.0 },{ 1.0,-1.0,-1.0 },{ 1.0,1.0,-1.0 },{ -1.0,1.0,-1.0 },{ -1.0,-1.0,1.0 },{ 1.0,-1.0,1.0 },{ 1.0,1.0,1.0 },{ -1.0,1.0,1.0 } ,{0.0, 1.0, 0.0} };
 GLfloat colors[][3] = { { 0.0,0.0,0.0 },{ 1.0,0.0,0.0 },{ 1.0,1.0,0.0 },{ 0.0,1.0,0.0 },{ 0.0,0.0,1.0 },{ 1.0,0.0,1.0 },{ 1.0,1.0,1.0 },{ 0.0,1.0,1.0 } };
 GLfloat point[][3] = { {0,1,0},{-1,-1,1},{1,-1,1},{0,-1,-1} };
-static GLuint texName;
 
-void polygon(int a, int b, int c, int d,int color)
-{
-	glBegin(GL_POLYGON); glColor3fv(colors[color]);
-	glVertex3fv(vertices[a]); glVertex3fv(vertices[b]);
-	glVertex3fv(vertices[c]); glVertex3fv(vertices[d]);
-	glEnd();
-}
 void triangle(int a, int b, int c, int color)
 {
 	glBegin(GL_POLYGON); glColor3fv(colors[color]);
@@ -163,11 +70,7 @@ void triangle(int a, int b, int c, int color)
 	glTexCoord2f(1.0f, 1.0f); glVertex3fv(point[c]);
 	glEnd();
 }
-void colorcube()
-{
-	polygon(0, 3, 2, 1, 1); polygon(2, 3, 7, 6, 2); polygon(0, 4, 7, 3, 3);
-	polygon(1, 2, 6, 5, 4); polygon(4, 5, 6, 7, 5); polygon(0, 1, 5, 4, 6);
-}
+
 void colorPyramid() {
 	triangle(0, 1, 2, 6); //6为白色，使其表面仅为图片颜色，反应光照颜色 
 	triangle(0, 3, 1, 6); //前三个数的顺序不可错，否则看不到图片
@@ -228,56 +131,6 @@ void keyboard(unsigned char key, int x, int y)
 	default:
 		break;
 	}
-}
-void display2(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-	glPushMatrix();
-	glTranslatef(0.0, 0.0, -5.0);
-	glRotatef(xrot, 1.0, 0.0, 0.0);
-	glRotatef(yrot, 0.0, 1.0, 0.0);
-	glRotatef(zrot, 0.0, 0.0, 1.0);
-
-	glBindTexture(GL_TEXTURE_2D, texture_id[0]);
-
-	glBegin(GL_QUADS);
-	// Front Face
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
-	// Back Face
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
-	// Top Face
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 1.0f, 1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
-	// Bottom Face
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, -1.0f, -1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
-	// Right face
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
-	// Left Face
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
-	glEnd();
-	glPopMatrix();
-	xrot += 0.3f;
-	yrot += 0.2f;
-	zrot += 0.4f;
-	glutSwapBuffers();
 }
 
 void reshape(int w, int h)
